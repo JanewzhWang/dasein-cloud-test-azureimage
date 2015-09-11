@@ -1,14 +1,6 @@
 package org.dasein.cloud.azure.compute.image;
 
-import static org.junit.Assert.assertEquals;
-
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.http.Header;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.dasein.cloud.AsynchronousTask;
 import org.dasein.cloud.CloudException;
 import org.dasein.cloud.InternalException;
@@ -16,9 +8,6 @@ import org.dasein.cloud.compute.*;
 import org.junit.Test;
 import junit.framework.Assert;
 import mockit.Expectations;
-import mockit.Invocation;
-import mockit.Mock;
-import mockit.MockUp;
 
 public class AzureImageTest extends AzureImageTestsBase {
 
