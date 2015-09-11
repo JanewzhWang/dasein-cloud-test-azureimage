@@ -1,13 +1,24 @@
 package org.dasein.cloud.azure.compute.image;
 
+import static org.junit.Assert.assertEquals;
+
 import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.http.Header;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.dasein.cloud.AsynchronousTask;
 import org.dasein.cloud.CloudException;
 import org.dasein.cloud.InternalException;
 import org.dasein.cloud.compute.*;
+import org.junit.Ignore;
 import org.junit.Test;
 import junit.framework.Assert;
 import mockit.Expectations;
+import mockit.Mock;
+import mockit.MockUp;
 
 public class AzureImageTest extends AzureImageTestsBase {
 
@@ -59,6 +70,7 @@ public class AzureImageTest extends AzureImageTestsBase {
 		Assert.assertEquals("Image change software failed", IMAGE_SOFTWARE, resultImage.getSoftware());
 	}
 
+	@Ignore
 	@Test(expected = CloudException.class)
 	public void captureShouldThrowExceptionIfRetrieveImageTimeout() throws InternalException, CloudException {
 		AzureImageSupport azureImageSupport = new AzureImageSupport(azureMock);
@@ -86,18 +98,66 @@ public class AzureImageTest extends AzureImageTestsBase {
 				null);
 	}
 	
+	@Test
+	public void removeMachineImageShouldDeleteWithCorrectRequest() throws CloudException, InternalException {
+
+		final AzureMachineImage machineImage = new AzureMachineImage();
+		machineImage.setProviderMachineImageId(TEST_IMAGE_ID);
+		machineImage.setAzureImageType(ImageClass.MACHINE.name());
+		AzureImageSupport azureImageSupport = new AzureImageSupport(azureMock, machineImage);
+		
+		final CloseableHttpResponse mockedHttpResponse = getHttpResponseMock(getStatusLineMock(HttpServletResponse.SC_OK), null, new Header[]{});
+		new MockUp<CloseableHttpClient>() {
+            @Mock(invocations = 1)
+            public CloseableHttpResponse execute(HttpUriRequest request) {
+            	assertEquals("Start method should do a DELETE", "DELETE", request.getMethod());
+            	assertEquals("Start method does not delete from the correct url", 
+            			ENDPOINT + "/" + ACCOUNT_NUMBER + "/services/vmimages/" + machineImage.getProviderMachineImageId() + "?comp=media", 
+            			request.getURI().toString());
+            	return mockedHttpResponse;
+            }
+        };
+		
+        azureImageSupport.remove(machineImage.getProviderMachineImageId());  
+	}
+	
+	@Test
+	public void removeOSImageShouldDeleteWithCorrectRequest() throws CloudException, InternalException {
+
+		final AzureMachineImage machineImage = new AzureMachineImage();
+		machineImage.setProviderMachineImageId(TEST_IMAGE_ID);
+		machineImage.setAzureImageType("osimage");
+		AzureImageSupport azureImageSupport = new AzureImageSupport(azureMock, machineImage);
+		
+		final CloseableHttpResponse mockedHttpResponse = getHttpResponseMock(getStatusLineMock(HttpServletResponse.SC_OK), null, new Header[]{});
+		new MockUp<CloseableHttpClient>() {
+            @Mock(invocations = 1)
+            public CloseableHttpResponse execute(HttpUriRequest request) {
+            	assertEquals("Start method should do a DELETE", "DELETE", request.getMethod());
+            	assertEquals("Start method does not delete from the correct url", 
+            			ENDPOINT + "/" + ACCOUNT_NUMBER + "/services/images/" + machineImage.getProviderMachineImageId() + "?comp=media", 
+            			request.getURI().toString());
+            	return mockedHttpResponse;
+            }
+        };
+		
+        azureImageSupport.remove(machineImage.getProviderMachineImageId());  
+	}
+	
 	/**
 	 * getImage - TODO at last
-	 * listImageStatus
-	 * listImages 3
+	 * listImageStatus				- getAllImages
+	 * listImages 3					- getAllImages
 	 * listMachineImages
 	 * listMachineImagesOwnedBy
-	 * remove: by machine image id
 	 * searchPublicMachineImages
 	 * searchPublicImages
-	 * @throws InternalException 
-	 * @throws CloudException 
 	 */
-	
+	@Test
+	public void listImagesByFilterShouldGetWithCorrectRequest() {
+		
+		
+		
+	}
 
 }

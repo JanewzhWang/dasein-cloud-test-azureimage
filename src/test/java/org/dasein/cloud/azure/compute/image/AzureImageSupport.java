@@ -20,10 +20,6 @@ public class AzureImageSupport extends AzureOSImage {
 		this.machineImage = machineImage;
 	}
 	
-	public void setMachineImage(MachineImage machineImage) {
-		this.machineImage = machineImage;
-	}
-	
 	@Override public MachineImage getImage(@Nonnull String machineImageId) throws CloudException, InternalException {
 		return machineImage;
 	}
