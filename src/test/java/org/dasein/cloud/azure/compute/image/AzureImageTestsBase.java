@@ -25,8 +25,9 @@ import org.dasein.cloud.compute.VmState;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
-
 import mockit.*;
+import static org.dasein.cloud.azure.tests.HttpMethodAsserts.*;
+
 public class AzureImageTestsBase {
 	
 	@Mocked
@@ -108,8 +109,7 @@ public class AzureImageTestsBase {
 			new MockUp<CloseableHttpClient>() {
 	            @Mock(invocations = 1)
 	            public CloseableHttpResponse execute(HttpUriRequest request) {
-	            	assertEquals("Start method shoould do a POST", "POST", request.getMethod());
-	            	assertEquals("Start method does not post to the correct url", expectedUrl, request.getURI().toString());
+	            	assertGet(request, expectedUrl);
 	            	return mockedHttpResponse;
 	            }
 	        };

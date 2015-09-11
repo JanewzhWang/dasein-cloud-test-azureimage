@@ -19,6 +19,7 @@ import junit.framework.Assert;
 import mockit.Expectations;
 import mockit.Mock;
 import mockit.MockUp;
+import static org.dasein.cloud.azure.tests.HttpMethodAsserts.*;
 
 public class AzureImageTest extends AzureImageTestsBase {
 
@@ -110,10 +111,8 @@ public class AzureImageTest extends AzureImageTestsBase {
 		new MockUp<CloseableHttpClient>() {
             @Mock(invocations = 1)
             public CloseableHttpResponse execute(HttpUriRequest request) {
-            	assertEquals("Start method should do a DELETE", "DELETE", request.getMethod());
-            	assertEquals("Start method does not delete from the correct url", 
-            			ENDPOINT + "/" + ACCOUNT_NUMBER + "/services/vmimages/" + machineImage.getProviderMachineImageId() + "?comp=media", 
-            			request.getURI().toString());
+            	assertDelete(request, 
+            			ENDPOINT + "/" + ACCOUNT_NUMBER + "/services/vmimages/" + machineImage.getProviderMachineImageId() + "?comp=media");
             	return mockedHttpResponse;
             }
         };
@@ -133,10 +132,8 @@ public class AzureImageTest extends AzureImageTestsBase {
 		new MockUp<CloseableHttpClient>() {
             @Mock(invocations = 1)
             public CloseableHttpResponse execute(HttpUriRequest request) {
-            	assertEquals("Start method should do a DELETE", "DELETE", request.getMethod());
-            	assertEquals("Start method does not delete from the correct url", 
-            			ENDPOINT + "/" + ACCOUNT_NUMBER + "/services/images/" + machineImage.getProviderMachineImageId() + "?comp=media", 
-            			request.getURI().toString());
+            	assertDelete(request, 
+            			ENDPOINT + "/" + ACCOUNT_NUMBER + "/services/images/" + machineImage.getProviderMachineImageId() + "?comp=media");
             	return mockedHttpResponse;
             }
         };
