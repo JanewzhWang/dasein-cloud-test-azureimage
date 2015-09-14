@@ -51,10 +51,10 @@
   	<PricingDetailLink></PricingDetailLink>
   </VMImage> -->
   <VMImage>
-  	<Name>vm_img_1</Name>
-  	<Label>vm_img_1</Label>
+  	<Name>vmimg_windows_1</Name>
+  	<Label>vmimg_windows_1</Label>
   	<Category>user</Category>
-  	<Description>vm image NO. 1</Description>
+  	<Description>vm image on windows for specific user</Description>
   	<OSDiskConfiguration>
   		<Name>osdis_conf_1</Name>
   		<HostCaching>/dev/hgfs1</HostCaching>
@@ -65,16 +65,30 @@
   	<Location>TEST_REGION</Location>
   </VMImage>
   <VMImage>
-  	<Name>vm_img_2</Name>
-  	<Label>vm_img_2</Label>
+  	<Name>vmimg_rhel_2</Name>
+  	<Label>vmimg_rhel_2</Label>
   	<Category>user</Category>
-  	<Description>vm image NO. 2</Description>
+  	<Description>vm image on redhat linux for specific user</Description>
   	<OSDiskConfiguration>
   		<Name>osdis_conf_2</Name>
   		<HostCaching>/dev/hgfs2</HostCaching>
   		<OSState>running</OSState>
   		<OS>rhel</OS>
   		<MediaLink>http://azure.microsoft.com/osdiskconfig/osdis_conf_2</MediaLink>
+  	</OSDiskConfiguration>
+  	<Location>TEST_REGION</Location>
+  </VMImage>
+  <VMImage>
+  	<Name>vmimg_windows_3</Name>
+  	<Label>vmimg_windows_3</Label>
+  	<Category>partner</Category>
+  	<Description>vm image on windows for partner</Description>
+  	<OSDiskConfiguration>
+  		<Name>osdis_conf_3</Name>
+  		<HostCaching>/dev/hgfs3</HostCaching>
+  		<OSState>running</OSState>
+  		<OS>windows</OS>
+  		<MediaLink>http://azure.microsoft.com/osdiskconfig/osdis_conf_3</MediaLink>
   	</OSDiskConfiguration>
   	<Location>TEST_REGION</Location>
   </VMImage>

@@ -1,22 +1,8 @@
 package org.dasein.cloud.azure.compute.image;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.StringWriter;
-
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -124,9 +110,36 @@ public class AzureImageTestsBase {
 			new MockUp<CloseableHttpClient>() {
 	            @Mock(invocations = 1)
 	            public CloseableHttpResponse execute(HttpUriRequest request) {
-	            	assertEquals(request.getMethod(), "POST");
-	            	assertEquals(request.getURI().toString(), expectedUrl);
+	            	assertPost(request, expectedUrl);
 	            	return mockedHttpResponse;
+	            }
+	        };
+		} else if (name.getMethodName().startsWith("list")) {
+			
+			String category = "user";
+			
+			if (name.getMethodName().startsWith("listPublic")) {
+				category = "";
+			}
+			
+			final String expectedOSImagesUrl = REQUEST_PREFIX + "/services/images";
+			final String expectedVMImagesUrl = REQUEST_PREFIX + String.format("/services/vmimages?location=%s&category=%s", REGION_ID, category);
+			final CloseableHttpResponse mockedHttpRespWithOsImages = getHttpResponseMock(getStatusLineMock(HttpServletResponse.SC_OK), 
+					getHttpEntityMock("org/dasein/cloud/azure/compute/image/osimagesmodel.xml") , new Header[]{});
+			final CloseableHttpResponse mockedHttpRespWithVmImages = getHttpResponseMock(getStatusLineMock(HttpServletResponse.SC_OK), 
+					getHttpEntityMock("org/dasein/cloud/azure/compute/image/vmimagesmodel.xml") , new Header[]{});
+			new MockUp<CloseableHttpClient>() {
+	            @Mock(invocations = 2)
+	            public CloseableHttpResponse execute(Invocation inv, HttpUriRequest request) {
+	            	if (inv.getInvocationCount() == 1) {
+	            		assertGet(request, expectedOSImagesUrl);
+	            		return mockedHttpRespWithOsImages;
+	            	} else if (inv.getInvocationCount() == 2) {
+	            		assertGet(request, expectedVMImagesUrl);
+	            		return mockedHttpRespWithVmImages;
+	            	} else {
+	            		throw new RuntimeException("Assert failed for more than 2 invocation found!");
+	            	}
 	            }
 	        };
 		}
@@ -165,20 +178,5 @@ public class AzureImageTestsBase {
                 return headers;
             }
         }.getMockInstance();
-    }
-    
-    protected <T> T unmarshal(String filePath, Class<?> cls) throws JAXBException, FileNotFoundException {
-    	InputStream is = new FileInputStream(getClass().getClassLoader().getResource(filePath).getPath());
-        JAXBContext jc = JAXBContext.newInstance(cls);
-        Unmarshaller m = jc.createUnmarshaller();
-        return (T) m.unmarshal(is);
-    }
-    
-    protected <T> void marshal(String filePath, T obj) throws FileNotFoundException, JAXBException {
-    	OutputStream os = new FileOutputStream(getClass().getClassLoader().getResource(filePath).getPath());
-    	JAXBContext jc = JAXBContext.newInstance(obj.getClass());
-    	Marshaller m = jc.createMarshaller();
-    	m.marshal(obj, os);
-    }
-    
+    } 
 }

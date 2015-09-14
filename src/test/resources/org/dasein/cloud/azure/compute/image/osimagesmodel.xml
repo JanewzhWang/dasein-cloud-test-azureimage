@@ -30,7 +30,7 @@
   	<MediaLink>http://azure.microsoft.com/osimages/mcft_osimg_1</MediaLink>
   	<Name>mcft_osimg_1</Name>
   	<OS>windows</OS>
-  	<Description>mcft os image NO. 1</Description>
+  	<Description>mcft os image on windows for specific user</Description>
   	<Location>TEST_REGION</Location>
   </OSImage>
   <OSImage>
@@ -40,7 +40,17 @@
   	<MediaLink>http://azure.microsoft.com/osimages/rhel_osimg_2</MediaLink>
   	<Name>rhel_osimg_2</Name>
   	<OS>rhel</OS>
-  	<Description>rhel os image NO. 2</Description>
+  	<Description>rhel os image on redhat linux for specific user</Description>
+  	<Location>TEST_REGION</Location>
+  </OSImage>
+  <OSImage>
+  	<AffinityGroup>affgrp2</AffinityGroup>
+  	<Category>partner</Category>
+  	<Label>mcft_osimg_3</Label>
+  	<MediaLink>http://azure.microsoft.com/osimages/mcft_osimg_1</MediaLink>
+  	<Name>mcft_osimg_3</Name>
+  	<OS>windows</OS>
+  	<Description>mcft os image on windows for partner</Description>
   	<Location>TEST_REGION</Location>
   </OSImage>
 </Images>
