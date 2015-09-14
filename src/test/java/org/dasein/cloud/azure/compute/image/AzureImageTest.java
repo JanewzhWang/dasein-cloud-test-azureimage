@@ -2,9 +2,9 @@ package org.dasein.cloud.azure.compute.image;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Iterator;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -17,9 +17,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import junit.framework.Assert;
 import mockit.Expectations;
+import mockit.Invocation;
 import mockit.Mock;
 import mockit.MockUp;
-import static org.dasein.cloud.azure.tests.HttpMethodAsserts.*;
 
 public class AzureImageTest extends AzureImageTestsBase {
 
@@ -71,7 +71,6 @@ public class AzureImageTest extends AzureImageTestsBase {
 		Assert.assertEquals("Image change software failed", IMAGE_SOFTWARE, resultImage.getSoftware());
 	}
 
-	@Ignore
 	@Test(expected = CloudException.class)
 	public void captureShouldThrowExceptionIfRetrieveImageTimeout() throws InternalException, CloudException {
 		AzureImageSupport azureImageSupport = new AzureImageSupport(azureMock);
@@ -111,8 +110,9 @@ public class AzureImageTest extends AzureImageTestsBase {
 		new MockUp<CloseableHttpClient>() {
             @Mock(invocations = 1)
             public CloseableHttpResponse execute(HttpUriRequest request) {
-            	assertDelete(request, 
-            			ENDPOINT + "/" + ACCOUNT_NUMBER + "/services/vmimages/" + machineImage.getProviderMachineImageId() + "?comp=media");
+            	assertEquals(request.getMethod(), "DELETE");
+            	assertEquals(request.getURI().toString(), ENDPOINT + "/" + ACCOUNT_NUMBER + "/services/vmimages/" + 
+            			machineImage.getProviderMachineImageId() + "?comp=media");
             	return mockedHttpResponse;
             }
         };
@@ -132,8 +132,9 @@ public class AzureImageTest extends AzureImageTestsBase {
 		new MockUp<CloseableHttpClient>() {
             @Mock(invocations = 1)
             public CloseableHttpResponse execute(HttpUriRequest request) {
-            	assertDelete(request, 
-            			ENDPOINT + "/" + ACCOUNT_NUMBER + "/services/images/" + machineImage.getProviderMachineImageId() + "?comp=media");
+            	assertEquals(request.getMethod(), "DELETE");
+            	assertEquals(request.getURI().toString(), ENDPOINT + "/" + ACCOUNT_NUMBER + "/services/images/" + 
+            			machineImage.getProviderMachineImageId() + "?comp=media");
             	return mockedHttpResponse;
             }
         };
@@ -141,20 +142,57 @@ public class AzureImageTest extends AzureImageTestsBase {
         azureImageSupport.remove(machineImage.getProviderMachineImageId());  
 	}
 	
-	/**
+	/*
 	 * getImage - TODO at last
 	 * listImageStatus				- getAllImages
 	 * listImages 3					- getAllImages
 	 * listMachineImages
 	 * listMachineImagesOwnedBy
 	 * searchPublicMachineImages
-	 * searchPublicImages
+	 * searchPublicImages 
 	 */
 	@Test
-	public void listImagesByFilterShouldGetWithCorrectRequest() {
+	public void listImagesByImageClassShouldGetWithCorrectRequest() throws CloudException, InternalException {
 		
-		
-		
+		final String expectedOSImagesUrl = REQUEST_PREFIX + "/services/images";
+		final String expectedVMImagesUrl = REQUEST_PREFIX + String.format("/services/vmimages?location=%s&category=user", REGION_ID);
+		final CloseableHttpResponse mockedHttpRespWithOsImages = getHttpResponseMock(getStatusLineMock(HttpServletResponse.SC_OK), 
+				getHttpEntityMock("org/dasein/cloud/azure/compute/image/osimagesmodel.xml") , new Header[]{});
+		final CloseableHttpResponse mockedHttpRespWithVmImages = getHttpResponseMock(getStatusLineMock(HttpServletResponse.SC_OK), 
+				getHttpEntityMock("org/dasein/cloud/azure/compute/image/vmimagesmodel.xml") , new Header[]{});
+		new MockUp<CloseableHttpClient>() {
+            @Mock(invocations = 2)
+            public CloseableHttpResponse execute(Invocation inv, HttpUriRequest request) {
+            	if (inv.getInvocationCount() == 1) {
+            		assertEquals(request.getMethod(), "GET");
+            		assertEquals(request.getURI().toString(), expectedOSImagesUrl);
+            		return mockedHttpRespWithOsImages;
+            	} else if (inv.getInvocationCount() == 2) {
+            		assertEquals(request.getMethod(), "GET");
+            		assertEquals(request.getURI().toString(), expectedVMImagesUrl);
+            		return mockedHttpRespWithVmImages;
+            	} else {
+            		throw new RuntimeException("Assert failed for more than 2 invocation found!");
+            	}
+            }
+        };
+        
+        AzureImageSupport azureImageSupport = new AzureImageSupport(azureMock, null);
+        Iterable<MachineImage> images = azureImageSupport.listImages(ImageClass.MACHINE);
+		Iterator<MachineImage> imagesIter = images.iterator();
+        MachineImage machineImage = imagesIter.next();
+        assertEquals("First OS Image name is wrong", machineImage.getName(), "mcft_osimg_1");
+        machineImage = imagesIter.next();
+        assertEquals("Second OS Image name is wrong", machineImage.getName(), "rhel_osimg_2");
+        machineImage = imagesIter.next();
+        assertEquals("Third VM Image name is wrong", machineImage.getName(), "vm_img_1");
+        machineImage = imagesIter.next();
+        assertEquals("Fourth VM Image name is wrong", machineImage.getName(), "vm_img_2");
 	}
-
+	
+	@Test
+	public void listImagesByFilterShouldGetWithCorrectRequest() throws CloudException, InternalException {
+		//TODO
+	}
+	
 }

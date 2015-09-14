@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<Images xmlns="http://schemas.microsoft.com/windowsazure">
+  <!-- Full Template -->
+  <!-- <OSImage>
+  	<AffinityGroup>TEST_OSIMG_AG</AffinityGroup>
+  	<Category>microsoft</Category>
+  	<Label>TEST_OSIMG_LABEL</Label>
+  	<MediaLink>http://azure.microsoft.com/osimages/TEST_OSIMG_NAME</MediaLink>
+  	<Name>TEST_OSIMG_NAME</Name>
+  	<OS>windows</OS>
+  	<Description>TEST_OSIMG_DESC</Description>
+  	<Location></Location>
+  	<LogicalSizeInGB></LogicalSizeInGB>
+  	<Eula></Eula>
+  	<ImageFamily></ImageFamily>
+  	<ShowInGui></ShowInGui>
+  	<PublishedDate></PublishedDate>
+  	<IsPremium></IsPremium>
+  	<PrivacyUri></PrivacyUri>
+  	<RecommendedVMSize></RecommendedVMSize>
+  	<PublisherName></PublisherName>
+  	<PricingDetailLink></PricingDetailLink>
+  	<SmallIconUri></SmallIconUri>
+  	<Language></Language>
+  </OSImage> -->
+  <OSImage>
+  	<AffinityGroup>affgrp1</AffinityGroup>
+  	<Category>user</Category>
+  	<Label>mcft_osimg_1</Label>
+  	<MediaLink>http://azure.microsoft.com/osimages/mcft_osimg_1</MediaLink>
+  	<Name>mcft_osimg_1</Name>
+  	<OS>windows</OS>
+  	<Description>mcft os image NO. 1</Description>
+  	<Location>TEST_REGION</Location>
+  </OSImage>
+  <OSImage>
+  	<AffinityGroup>affgrp2</AffinityGroup>
+  	<Category>user</Category>
+  	<Label>rhel_osimg_2</Label>
+  	<MediaLink>http://azure.microsoft.com/osimages/rhel_osimg_2</MediaLink>
+  	<Name>rhel_osimg_2</Name>
+  	<OS>rhel</OS>
+  	<Description>rhel os image NO. 2</Description>
+  	<Location>TEST_REGION</Location>
+  </OSImage>
+</Images>

@@ -2,7 +2,20 @@ package org.dasein.cloud.azure.compute.image;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringWriter;
+
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -54,6 +67,8 @@ public class AzureImageTestsBase {
 	protected final String DEPLOYMENT_NAME	= "TEST_DEPLOYMENT_NAME";
 	protected final String ROLE_NAME		= "TEST_ROLE_NAME";
 	
+	protected final String REQUEST_PREFIX = ENDPOINT + "/" + ACCOUNT_NUMBER;
+	
 	protected final VirtualMachine virtualMachine = new VirtualMachine();
 	
 	@Before
@@ -102,14 +117,15 @@ public class AzureImageTestsBase {
 	
 	@Before
 	public void initializeMockUp() {
-		final String expectedUrl = String.format("%s/%s/services/hostedservices/%s/deployments/%s/roleInstances/%s/Operations", 
-        		ENDPOINT, ACCOUNT_NUMBER, SERVICE_NAME, DEPLOYMENT_NAME, ROLE_NAME);
+		final String expectedUrl = REQUEST_PREFIX + String.format("/services/hostedservices/%s/deployments/%s/roleInstances/%s/Operations", 
+        		SERVICE_NAME, DEPLOYMENT_NAME, ROLE_NAME);
 		if (name.getMethodName().startsWith("capture")) {
 			final CloseableHttpResponse mockedHttpResponse = getHttpResponseMock(getStatusLineMock(HttpServletResponse.SC_OK), null, new Header[]{});
 			new MockUp<CloseableHttpClient>() {
 	            @Mock(invocations = 1)
 	            public CloseableHttpResponse execute(HttpUriRequest request) {
-	            	assertGet(request, expectedUrl);
+	            	assertEquals(request.getMethod(), "POST");
+	            	assertEquals(request.getURI().toString(), expectedUrl);
 	            	return mockedHttpResponse;
 	            }
 	        };
@@ -124,6 +140,15 @@ public class AzureImageTestsBase {
             }
         }.getMockInstance();
     }
+	
+	protected HttpEntity getHttpEntityMock(final String filePath) {
+		return new MockUp<HttpEntity>() {
+			@Mock
+			InputStream getContent() throws IOException, IllegalStateException {
+				return getClass().getClassLoader().getResourceAsStream(filePath);
+			}
+		}.getMockInstance();
+	}
 
     protected CloseableHttpResponse getHttpResponseMock(final StatusLine statusLine, final HttpEntity httpEntity, final Header[] headers){
         return new MockUp<CloseableHttpResponse>(){
@@ -140,6 +165,20 @@ public class AzureImageTestsBase {
                 return headers;
             }
         }.getMockInstance();
+    }
+    
+    protected <T> T unmarshal(String filePath, Class<?> cls) throws JAXBException, FileNotFoundException {
+    	InputStream is = new FileInputStream(getClass().getClassLoader().getResource(filePath).getPath());
+        JAXBContext jc = JAXBContext.newInstance(cls);
+        Unmarshaller m = jc.createUnmarshaller();
+        return (T) m.unmarshal(is);
+    }
+    
+    protected <T> void marshal(String filePath, T obj) throws FileNotFoundException, JAXBException {
+    	OutputStream os = new FileOutputStream(getClass().getClassLoader().getResource(filePath).getPath());
+    	JAXBContext jc = JAXBContext.newInstance(obj.getClass());
+    	Marshaller m = jc.createMarshaller();
+    	m.marshal(obj, os);
     }
     
 }

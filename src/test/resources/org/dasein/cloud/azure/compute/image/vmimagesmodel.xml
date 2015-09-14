@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<VMImages xmlns="http://schemas.microsoft.com/windowsazure">
+  <!-- Full Template -->
+  <!-- <VMImage>
+  	<Name>vm_img_1</Name>
+  	<Label>vm_img_1</Label>
+  	<Category>microsoft</Category>
+  	<Description>vm image NO. 1</Description>
+  	<OSDiskConfiguration>
+  		<Name>osdis_conf_1</Name>
+  		<HostCaching>/dev/hgfs1</HostCaching>
+  		<OSState>running</OSState>
+  		<OS>windows</OS>
+  		<MediaLink>http://azure.microsoft.com/osdiskconfig/osdis_conf_1</MediaLink>
+  		<LogicalDiskSizeInGB></LogicalDiskSizeInGB>
+  	</OSDiskConfiguration>
+  	<DataDiskConfigurations>
+  		<DataDiskConfiguration>
+  			<Name></Name>
+  			<HostCaching></HostCaching>
+  			<Lun></Lun>
+  			<MediaLink></MediaLink>
+  			<LogicalDiskSizeInGB></LogicalDiskSizeInGB>
+  		</DataDiskConfiguration>
+  		<DataDiskConfiguration>
+  			<Name></Name>
+  			<HostCaching></HostCaching>
+  			<Lun></Lun>
+  			<MediaLink></MediaLink>
+  			<LogicalDiskSizeInGB></LogicalDiskSizeInGB>
+  		</DataDiskConfiguration>
+  	</DataDiskConfigurations>
+  	<ServiceName></ServiceName>
+  	<DeploymentName></DeploymentName>
+  	<RoleName></RoleName>
+  	<Location></Location>
+  	<AffinityGroup></AffinityGroup>
+  	<CreatedTime></CreatedTime>
+  	<ModifiedTime></ModifiedTime>
+  	<Language></Language>
+  	<ImageFamily></ImageFamily>
+  	<RecommendedVMSize></RecommendedVMSize>
+  	<IsPremium></IsPremium>
+  	<Eula></Eula>
+  	<IconUri></IconUri>
+  	<SmallIconUri></SmallIconUri>
+  	<PrivacyUri></PrivacyUri>
+  	<PublisherName></PublisherName>
+  	<PublishedDate></PublishedDate>
+  	<ShowInGui></ShowInGui>
+  	<PricingDetailLink></PricingDetailLink>
+  </VMImage> -->
+  <VMImage>
+  	<Name>vm_img_1</Name>
+  	<Label>vm_img_1</Label>
+  	<Category>user</Category>
+  	<Description>vm image NO. 1</Description>
+  	<OSDiskConfiguration>
+  		<Name>osdis_conf_1</Name>
+  		<HostCaching>/dev/hgfs1</HostCaching>
+  		<OSState>running</OSState>
+  		<OS>windows</OS>
+  		<MediaLink>http://azure.microsoft.com/osdiskconfig/osdis_conf_1</MediaLink>
+  	</OSDiskConfiguration>
+  	<Location>TEST_REGION</Location>
+  </VMImage>
+  <VMImage>
+  	<Name>vm_img_2</Name>
+  	<Label>vm_img_2</Label>
+  	<Category>user</Category>
+  	<Description>vm image NO. 2</Description>
+  	<OSDiskConfiguration>
+  		<Name>osdis_conf_2</Name>
+  		<HostCaching>/dev/hgfs2</HostCaching>
+  		<OSState>running</OSState>
+  		<OS>rhel</OS>
+  		<MediaLink>http://azure.microsoft.com/osdiskconfig/osdis_conf_2</MediaLink>
+  	</OSDiskConfiguration>
+  	<Location>TEST_REGION</Location>
+  </VMImage>
+</VMImages>
